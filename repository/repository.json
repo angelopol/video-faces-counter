@@ -1,0 +1,18 @@
+{
+    "videos": [
+        {
+            "id": 1,
+            "title": "Video 1",
+            "description": "People walking across the street",
+            "file": "repository/855565-hd_1920_1080_24fps.mp4",
+            "faces": 7
+        },
+        {
+            "id": 2,
+            "title": "Video 2",
+            "description": "People walking in the street",
+            "file": "repository/1721303-hd_1920_1080_25fps.mp4",
+            "faces": 13
+        }
+    ]
+}
