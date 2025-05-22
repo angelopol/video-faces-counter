@@ -40,4 +40,4 @@ def FaceCount(VideoPath = '', ShowFaces = False):
 
 if __name__ == "__main__":
     # Call the function with the path to your video file
-    print(FaceCount('repository/855565-hd_1920_1080_24fps.mp4'))
+    print(FaceCount('repository/videos/855565-hd_1920_1080_24fps.mp4'))
