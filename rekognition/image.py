@@ -17,7 +17,6 @@ class RekognitionImage:
         self.image_name = image_name
         self.rekognition_client = rekognition_client
 
-
     def detect_faces(self):
         """
         Detects faces in the image.
@@ -35,6 +34,33 @@ class RekognitionImage:
             )
         else:
             return faces
+        
+    def compare_faces(self, target_image):
+        """
+        Compares faces in the image with the largest face in the target image.
+
+        :param target_image: The target image to compare against.
+        :param similarity: Faces in the image must have a similarity value greater
+                           than this value to be included in the results.
+        :return: A tuple. The first element is the list of faces that match the
+                 reference image. The second element is the list of faces that have
+                 a similarity value below the specified threshold.
+        """
+        try:
+            response = self.rekognition_client.compare_faces(
+                SourceImage=self.image,
+                TargetImage=target_image.image
+            )
+            matches = [
+                match["Face"] for match in response["FaceMatches"]
+            ]
+            unmatches = [face for face in response["UnmatchedFaces"]]
+        except Exception as e:
+            raise Exception(
+                f"Error comparing faces in image {self.image_name} to {target_image.image_name}: {e}"
+            )
+        else:
+            return matches, unmatches
         
 if __name__ == "__main__":
     import boto3
