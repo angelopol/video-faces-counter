@@ -62,6 +62,16 @@ class RekognitionImage:
         else:
             return matches, unmatches
         
+    @staticmethod
+
+    def get_cv2_dimensions(box, width, height):
+        left = int(box['Left'] * width)
+        top = int(box['Top'] * height)
+        right = int((box['Left'] + box['Width']) * width)
+        bottom = int((box['Top'] + box['Height']) * height)
+        
+        return (left, top), (right, bottom), (0, 255, 0), 2
+        
 if __name__ == "__main__":
     import boto3
 
