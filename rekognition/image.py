@@ -1,3 +1,7 @@
+import cv2
+import os
+import numpy as np
+
 class RekognitionImage:
     """
     Encapsulates an Amazon Rekognition image. This class is a thin wrapper
@@ -35,7 +39,7 @@ class RekognitionImage:
         else:
             return faces
         
-    def compare_faces(self, target_image):
+    def compare_faces(self, source_image, target_image):
         """
         Compares faces in the image with the largest face in the target image.
 
@@ -48,8 +52,10 @@ class RekognitionImage:
         """
         try:
             response = self.rekognition_client.compare_faces(
-                SourceImage=self.image,
-                TargetImage=target_image.image
+                SourceImage=source_image,
+                TargetImage=target_image,
+                SimilarityThreshold=90.0,
+                QualityFilter="AUTO"
             )
             matches = [
                 match["Face"] for match in response["FaceMatches"]
@@ -57,7 +63,7 @@ class RekognitionImage:
             unmatches = [face for face in response["UnmatchedFaces"]]
         except Exception as e:
             raise Exception(
-                f"Error comparing faces in image {self.image_name} to {target_image.image_name}: {e}"
+                f"Error comparing faces: {e}"
             )
         else:
             return matches, unmatches
@@ -70,8 +76,33 @@ class RekognitionImage:
         right = int((box['Left'] + box['Width']) * width)
         bottom = int((box['Top'] + box['Height']) * height)
         
-        return (left, top), (right, bottom), (0, 255, 0), 2
-        
+        return left, top, right, bottom
+    
+    def save_face(face_img, output_path="repository/data/collage.jpg"):
+        if face_img.size == 0:
+            return  # No guardar si el recorte está vacío
+
+        os.makedirs(os.path.dirname(output_path), exist_ok=True)
+
+        # Si el collage ya existe, cargarlo y añadir la nueva cara
+        if os.path.exists(output_path):
+            collage_img = cv2.imread(output_path)
+            # Igualar la altura de la nueva cara al collage si es necesario
+            collage_height = collage_img.shape[0]
+            face_height = face_img.shape[0]
+            if face_height < collage_height:
+                pad = np.zeros((collage_height - face_height, face_img.shape[1], 3), dtype=np.uint8)
+                face_img = np.vstack([face_img, pad])
+            elif face_height > collage_height:
+                pad = np.zeros((face_height - collage_height, collage_img.shape[1], 3), dtype=np.uint8)
+                collage_img = np.vstack([collage_img, pad])
+            # Añadir la nueva cara al final (horizontalmente)
+            collage_img = np.hstack([collage_img, face_img])
+        else:
+            collage_img = face_img
+
+        cv2.imwrite(output_path, collage_img)
+
 if __name__ == "__main__":
     import boto3
 
