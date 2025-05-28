@@ -4,16 +4,20 @@ from image import RekognitionImage
 import boto3
 import math
 import os
+import shutil
 
 rekognition_client = boto3.client("rekognition")
 
-def FaceCount(VideoPath = '', ShowFaces = False, delete_faces = True, collage_path = "repository/data/collage.jpg"):
-    if os.path.exists(collage_path):
-        os.remove(collage_path)
+def FaceCount(VideoPath = '', ShowFaces = False, delete_faces = True):
+    shutil.rmtree("repository/data", ignore_errors=True)
     cap = cv2.VideoCapture(VideoPath)
     frame_rate = cap.get(cv2.CAP_PROP_FPS)
+    collage_path = "repository/data/collage"
     current_frame = 0
     num_faces = 0
+    cycles = 1
+    face_confidence_threshold = 95
+    face_occluded_threshold = 90
     frames_per_second = 1
     if frames_per_second > frame_rate or frames_per_second == -1:
         frames_per_second = frame_rate
@@ -38,7 +42,7 @@ def FaceCount(VideoPath = '', ShowFaces = False, delete_faces = True, collage_pa
         
         n = 0
         for face in faces:
-            if face['Confidence'] < 90:
+            if face['Confidence'] < face_confidence_threshold or not RekognitionImage.is_frontal_face(face) or (face['FaceOccluded']['Value'] and face['FaceOccluded']['Confidence'] > face_occluded_threshold):
                 continue
             n += 1
             height, width, _ = frame.shape
@@ -46,23 +50,25 @@ def FaceCount(VideoPath = '', ShowFaces = False, delete_faces = True, collage_pa
             img_frame = frame[top:bottom, left:right]
             if img_frame.size == 0:
                 continue
-            if os.path.exists(collage_path):
-                with open(collage_path, "rb") as image_file:
-                    target_bytes = image_file.read()
-                _, face_buffer = cv2.imencode('.jpg', img_frame)
-                try:
-                    matches, _ = rekognition_image.compare_faces({"Bytes": face_buffer.tobytes()}, {"Bytes": target_bytes})
-                    if len(matches) == 0:
-                        RekognitionImage.save_face(img_frame)
-                        num_faces += 1
-                except Exception as e:
-                    pass
+            if os.path.exists(collage_path+"1.jpg"):
+                for i in range(cycles):
+                    with open(collage_path+str(i+1)+".jpg", "rb") as image_file:
+                        target_bytes = image_file.read()
+                    _, face_buffer = cv2.imencode('.jpg', img_frame)
+                    try:
+                        matches, _ = rekognition_image.compare_faces({"Bytes": face_buffer.tobytes()}, {"Bytes": target_bytes})
+                        if len(matches) == 0:
+                            RekognitionImage.save_face(img_frame, collage_path+str(i+1)+".jpg")
+                            num_faces += 1
+                    except Exception as e:
+                        pass
             else:
                 RekognitionImage.save_face(img_frame)
                 num_faces += 1
             if ShowFaces:
                 cv2.rectangle(frame, (left, top), (right, bottom), (0, 255, 0), 2)
-
+        if num_faces/cycles == 100:
+            cycles += 1
         if ShowFaces:
             cv2.imshow("Face", frame)
 
@@ -74,8 +80,7 @@ def FaceCount(VideoPath = '', ShowFaces = False, delete_faces = True, collage_pa
     cap.release()
     cv2.destroyAllWindows()
     if delete_faces:
-        if os.path.exists(collage_path):
-            os.remove(collage_path)
+        shutil.rmtree("repository/data", ignore_errors=True)
     # Print the number of faces found
     return num_faces
 

@@ -5,7 +5,7 @@
             "title": "Video 1",
             "description": "People walking across the street",
             "file": "repository/videos/855565-hd_1920_1080_24fps.mp4",
-            "faces": 7
+            "faces": 12
         },
         {
             "id": 2,
@@ -13,6 +13,13 @@
             "description": "People walking in the street",
             "file": "repository/videos/1721303-hd_1920_1080_25fps.mp4",
             "faces": 13
+        },
+        {
+            "id": 3,
+            "title": "Video 3",
+            "description": "People walking across the street duplicated",
+            "file": "repository/videos/855565-hd_1920_1080_24fps_2.mp4",
+            "faces": 12
         }
     ]
 }

@@ -29,7 +29,7 @@ class RekognitionImage:
         """
         try:
             response = self.rekognition_client.detect_faces(
-                Image=self.image, Attributes=["DEFAULT"]
+                Image=self.image, Attributes=["ALL"]
             )
             faces = [face for face in response["FaceDetails"]]
         except Exception as e:
@@ -53,9 +53,7 @@ class RekognitionImage:
         try:
             response = self.rekognition_client.compare_faces(
                 SourceImage=source_image,
-                TargetImage=target_image,
-                SimilarityThreshold=90.0,
-                QualityFilter="AUTO"
+                TargetImage=target_image
             )
             matches = [
                 match["Face"] for match in response["FaceMatches"]
@@ -70,6 +68,13 @@ class RekognitionImage:
         
     @staticmethod
 
+    def is_frontal_face(face, threshold=40):
+        pose = face.get('Pose', {})
+        yaw = abs(pose.get('Yaw', 0))
+        roll = abs(pose.get('Roll', 0))
+        pitch = abs(pose.get('Pitch', 0))
+        return yaw < threshold and roll < threshold and pitch < threshold
+
     def get_cv2_dimensions(box, width, height):
         left = int(box['Left'] * width)
         top = int(box['Top'] * height)
@@ -78,7 +83,7 @@ class RekognitionImage:
         
         return left, top, right, bottom
     
-    def save_face(face_img, output_path="repository/data/collage.jpg"):
+    def save_face(face_img, output_path="repository/data/collage1.jpg"):
         if face_img.size == 0:
             return  # No guardar si el recorte está vacío
 
