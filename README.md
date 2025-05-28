@@ -14,10 +14,3 @@ Testing functionalities:
 
 - Display the detected faces while the video is playing.
 - Display only the new faces detected while the video is playing.
-- Store the recognition results in a JSON file with the following attributes:
-    - Input video (video).
-    - File (file).
-    - Faces detected by a person (FacesPerson).
-    - Faces detected using the video faces counter (FacesCounter).
-    - Recognition average (average).
-    - Execution date (exe).

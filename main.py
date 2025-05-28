@@ -8,7 +8,7 @@ import shutil
 
 rekognition_client = boto3.client("rekognition")
 
-def FaceCount(VideoPath = '', ShowFaces = False, delete_faces = True):
+def FaceCount(VideoPath = '', ShowFaces = False, delete_faces = True, ShowNewFaces = False):
     shutil.rmtree("repository/data", ignore_errors=True)
     cap = cv2.VideoCapture(VideoPath)
     frame_rate = cap.get(cv2.CAP_PROP_FPS)
@@ -59,13 +59,15 @@ def FaceCount(VideoPath = '', ShowFaces = False, delete_faces = True):
                         matches, _ = rekognition_image.compare_faces({"Bytes": face_buffer.tobytes()}, {"Bytes": target_bytes})
                         if len(matches) == 0:
                             RekognitionImage.save_face(img_frame, collage_path+str(i+1)+".jpg")
+                            if ShowNewFaces:
+                                cv2.rectangle(frame, (left, top), (right, bottom), (0, 255, 0), 2)
                             num_faces += 1
                     except Exception as e:
                         pass
             else:
                 RekognitionImage.save_face(img_frame)
                 num_faces += 1
-            if ShowFaces:
+            if ShowFaces and not ShowNewFaces:
                 cv2.rectangle(frame, (left, top), (right, bottom), (0, 255, 0), 2)
         if num_faces/cycles == 100:
             cycles += 1
