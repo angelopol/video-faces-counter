@@ -14,7 +14,7 @@ with open('repository/repository.json', 'r') as file:
 accuracies = []
 for item in data['videos']:
     print("Processing video:", item['title'])
-    num_faces = FaceCount(item['file'], True)
+    num_faces = FaceCount(item['file'])
     print("Number of faces detected:", num_faces)
     accuracy = facecount_accuracy(num_faces, item['faces'])
     accuracies.append(accuracy)
