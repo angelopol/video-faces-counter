@@ -1,6 +1,6 @@
 if 'sys' not in dir(): import sys; sys.path.append("./")
 import json
-from main import FaceCount
+from VideoFacesCounter import FaceCount
 
 def facecount_accuracy(num_faces_detected, num_faces_real):
     if num_faces_real == 0:

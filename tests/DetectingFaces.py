@@ -1,6 +1,4 @@
-if 'sys' not in dir(): import sys; sys.path.append("rekognition")
-from image import RekognitionImage
-
+from rekognition.image import RekognitionImage
 import boto3
 import cv2
 
