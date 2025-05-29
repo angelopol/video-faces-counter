@@ -8,7 +8,6 @@ setup(
     url="https://github.com/angelopol/video-faces-counter",
     py_modules=["VideoFacesCounter"],
     install_requires=[
-        "tabulate",
         "boto3",
         "opencv-python",
         "numpy"
