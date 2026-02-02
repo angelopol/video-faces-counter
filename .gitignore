@@ -1,3 +1,6 @@
 __pycache__/*
 video_faces_counter.egg-info/*
 build/*
+
+# Environment variables (DO NOT COMMIT)
+.env

@@ -10,7 +10,8 @@ setup(
     install_requires=[
         "boto3",
         "opencv-python",
-        "numpy"
+        "numpy",
+        "python-dotenv",
     ],
     classifiers=[
         "Programming Language :: Python :: 3",

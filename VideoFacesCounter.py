@@ -1,13 +1,57 @@
+import os
 import cv2
 from rekognition.image import RekognitionImage
 import boto3
 import math
-import os
 import shutil
 
-rekognition_client = boto3.client("rekognition")
+# Load environment variables from .env file if available
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    pass  # python-dotenv not installed, will use environment variables directly
 
-def FaceCount(VideoPath = '', ShowFaces = False, delete_faces = True, ShowNewFaces = False):
+
+def get_rekognition_client(
+    aws_access_key_id: str = None,
+    aws_secret_access_key: str = None,
+    aws_session_token: str = None,
+    region: str = None
+):
+    """
+    Creates a Rekognition client with optional explicit credentials.
+    
+    Args:
+        aws_access_key_id: AWS Access Key ID (optional, uses env if not provided)
+        aws_secret_access_key: AWS Secret Access Key (optional, uses env if not provided)
+        aws_session_token: AWS Session Token for temporary credentials (optional)
+        region: AWS region (optional, defaults to env or us-east-1)
+    
+    Returns:
+        boto3 Rekognition client
+    """
+    # Get credentials from parameters or environment
+    access_key = aws_access_key_id or os.getenv("AWS_ACCESS_KEY_ID")
+    secret_key = aws_secret_access_key or os.getenv("AWS_SECRET_ACCESS_KEY")
+    session_token = aws_session_token or os.getenv("AWS_SESSION_TOKEN")
+    aws_region = region or os.getenv("AWS_REGION", os.getenv("AWS_DEFAULT_REGION", "us-east-1"))
+    
+    client_kwargs = {"region_name": aws_region}
+    
+    if access_key and secret_key:
+        client_kwargs["aws_access_key_id"] = access_key
+        client_kwargs["aws_secret_access_key"] = secret_key
+        if session_token:
+            client_kwargs["aws_session_token"] = session_token
+    
+    return boto3.client("rekognition", **client_kwargs)
+
+
+# Default client using environment variables or AWS credential chain
+rekognition_client = get_rekognition_client()
+
+def FaceCount(VideoPath = '', ShowFaces = False, delete_faces = True, ShowNewFaces = False, rekognition_client = rekognition_client):
     shutil.rmtree("repository/data", ignore_errors=True)
     cap = cv2.VideoCapture(VideoPath)
     frame_rate = cap.get(cv2.CAP_PROP_FPS)
