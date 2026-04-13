@@ -75,13 +75,14 @@ class RekognitionImage:
         pitch = abs(pose.get('Pitch', 0))
         return yaw < threshold and roll < threshold and pitch < threshold
 
+    @staticmethod
     def get_cv2_dimensions(box, width, height):
         left = int(box['Left'] * width)
         top = int(box['Top'] * height)
         right = int((box['Left'] + box['Width']) * width)
         bottom = int((box['Top'] + box['Height']) * height)
         
-        return left, top, right, bottom
+        return (left, top), (right, bottom)
     
     def save_face(face_img, output_path="repository/data/collage1.jpg"):
         if face_img.size == 0:

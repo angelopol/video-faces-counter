@@ -23,7 +23,7 @@ img = cv2.imread(image_path)
 height, width, _ = img.shape
 
 for face in faces:
-    cv2.rectangle(img, *RekognitionImage.get_cv2_dimensions(face['BoundingBox'], width, height))
+    cv2.rectangle(img, *RekognitionImage.get_cv2_dimensions(face['BoundingBox'], width, height), (0, 255, 0), 2)
 
 # Guardar la imagen resultante
 while True:
