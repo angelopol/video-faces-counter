@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(Get-ChildItem -Path \"c:\\\\Users\\\\Angel\\\\OneDrive\\\\Escritorio\\\\Courses\\\\Tesis\\\\software\\\\transport-monitor\" -Force)",
+      "Bash(Select-Object Name, PSIsContainer)",
+      "Bash(Format-Table -AutoSize)",
+      "Bash(pip install *)",
+      "Bash(pip show *)",
+      "Bash(python test_gps.py --source windows)",
+      "Bash(powershell -NonInteractive -NoProfile -Command ' *)"
+    ]
+  }
+}
